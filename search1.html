@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/utils.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/mobile.css">
+    <title>vBlog - Heaven for bloggers</title>
+</head>
+
+<body>
+    <nav class="navigation max-width-1 m-auto">
+        <div class="nav-left">
+            <a href="/">
+                <span><img src="img/logo.png" width="94px" alt=""></span>
+            </a>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </div>
+        <div class="nav-right">
+            <form>
+                <input class="form-input" type="text" id="search-input" placeholder="Article Search">
+                <button class="btn" id="search-button">Search</button>
+            </form>
+        </div>
+    </nav>
+
+    <div class="max-width-1 m-auto">
+        <hr>
+    </div>
+    <div class="home-articles max-width-1 m-auto font2">
+        <h2>Search Results for <span id="search-term"></span> (<span id="search-time"></span> seconds)</h2>
+        <div class="year-box adjust-year">
+            <div>
+                <h3>Year </h3>
+            </div>
+            <div>
+                <input type="checkbox" name="year-box" id=""> 2k21
+            </div>
+            <div>
+                <input type="checkbox" name="year-box" id=""> 2k22
+            </div>
+            <div>
+                <input type="checkbox" name="year-box" id=""> 2k23
+            </div>
+        </div>
+        <div id="search-results"></div>
+    </div>
+
+    <script>
+        const searchButton = document.getElementById('search-button');
+        const searchInput = document.getElementById('search-input');
+        const searchTerm = document.getElementById('search-term');
+        const searchTime = document.getElementById('search-time');
+        const searchResults = document.getElementById('search-results');
+
+        searchButton.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const query = searchInput.value;
+
+            if (query.trim() !== '') {
+                searchTerm.textContent = query;
+
+                const xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            const results = JSON.parse(xhr.responseText);
+
+                            let output = '';
+                            for (let i = 0; i < results.length; i++) {
+                                output += `
+                                    <div class="home-article">
+                                        <div class="home-article-img">
+                                            <img src="${results[i].image}" alt="${results[i].title}">
+                                        </div>
+                                        <div class="home-article-content font1">
+                                            <a href="${results[i].link}"><h3>${results[i].title}</h3></a>
+                                            <span>${results[i].author}</span>
+                                            <span>${results[i].date} | ${results[i].readTime} min read</span>
+                                        </div>
+                                    </div>
+                                `
+                            }
+                        }
+                    }
+                }
+            }
+        })
+
+        // Define a function that will execute the search functionality
+        function search() {
+            // Get the input value entered by the user
+            const query = document.getElementById("search-input").value;
+
+            // Get all the home-articles elements and loop through them to find a match
+            const articles = document.getElementsByClassName("home-article");
+            for (let i = 0; i < articles.length; i++) {
+                const article = articles[i];
+                const title = article.querySelector("h3").textContent.toLowerCase();
+                const author = article.querySelector("span:nth-of-type(1)").textContent.toLowerCase();
+                // If the query matches the article title or author name, display the article
+                if (title.includes(query) || author.includes(query)) {
+                    article.style.display = "block";
+                } else {
+                    article.style.display = "none";
+                }
+
+            }
+        }
+
+        // Add an event listener to the search button to execute the search function when clicked
+        searchButton.addEventListener("click", search);
+
+        // Add an event listener to the search input field to execute the search function when the user presses the Enter key
+        searchInput.addEventListener("keyup", function (event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                search();
+            }
+        });
+    </script>
