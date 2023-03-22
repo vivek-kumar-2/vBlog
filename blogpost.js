@@ -11,7 +11,7 @@ const posts = [
         image: 'img/1n.png',
         title: 'Lorem ipsum dolor sit amet consectetur adipisicing.',
         link: '/blogpost.html',
-        author: 'sHIVAM KUMAR',
+        author: 'SHIVAM KUMAR',
         date: '07 January',
         readTime: '10 min read',
     },
